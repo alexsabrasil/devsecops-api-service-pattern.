@@ -19,3 +19,4 @@ Dockerfile.original
 
 # Backup do código
 src/index.original.js
+Dockerfile.pre-trivy
