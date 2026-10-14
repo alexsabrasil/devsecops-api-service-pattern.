@@ -1,0 +1,55 @@
+name: CI - DevSecOps
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Testes e auditoria de dependencias
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar codigo do repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Executar testes automatizados
+        run: npm test
+
+      - name: Auditar vulnerabilidades npm
+        run: npm audit --audit-level=high
+
+      - name: Verificar segredos com Gitleaks
+        run: |
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/repo:ro" \
+            zricethezav/gitleaks:latest \
+            git /repo --redact
+
+      - name: Construir imagem Docker
+        run: docker build -t api-service-pattern:ci .
+
+      - name: Analisar vulnerabilidades com Trivy
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          image-ref: 'api-service-pattern:ci'
+          format: 'table'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '1'
+          ignore-unfixed: false
