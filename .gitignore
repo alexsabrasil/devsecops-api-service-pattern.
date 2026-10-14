@@ -1,0 +1,21 @@
+# Dependências
+node_modules/
+
+# Variáveis de ambiente e segredos
+.env
+.env.*
+!.env.example
+
+# Logs e relatórios
+*.log
+coverage/
+
+# Arquivos temporários
+.DS_Store
+*.swp
+
+# Backup do Dockerfile
+Dockerfile.original
+
+# Backup do código
+src/index.original.js
