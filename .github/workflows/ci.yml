@@ -46,7 +46,7 @@ jobs:
         run: docker build -t api-service-pattern:ci .
 
       - name: Analisar vulnerabilidades com Trivy
-        uses: aquasecurity/trivy-action@0.33.1
+        uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'api-service-pattern:ci'
           format: 'table'
